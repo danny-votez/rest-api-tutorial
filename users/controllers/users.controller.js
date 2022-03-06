@@ -27,12 +27,16 @@ exports.list = (req, res) => {
         })
 };
 
+
+
 exports.getById = (req, res) => {
-    UserModel.findById(req.params.userId)
-        .then((result) => {
-            res.status(200).send(result);
-        });
+    UserModel.findById(req.params.userId).then((result) => {
+        res.status(200).send(result);
+    });
 };
+
+
+
 exports.patchById = (req, res) => {
     if (req.body.password) {
         let salt = crypto.randomBytes(16).toString('base64');
@@ -46,6 +50,35 @@ exports.patchById = (req, res) => {
         });
 
 };
+
+// In this section, the crypto.createHmac() method is applied
+exports.patchById = (req, res) => {
+    if (req.body.password){
+
+        let salt = crypto.randomBytes(16).toString('base64');
+        // The crypto.createHmac() method is used to create an Hmac object
+        // Overall, there is applying a Hashing Algorithm
+        // A Hashing Algorithm is a mathematical function that condenses data to a fixed size
+        // This Hmac object uses the stated 'algorithm' and 'key'
+        // The syntax is crypto.createHmac(algorithm, key, options)
+        // This is shown in the example below
+        let hash = crypto.createHmac('sha512', salt).update(req.body.password).digest("base64");
+        req.body.password = salt + "$" + hash;
+
+        // In the crypto.createHmac() method above, key elements are evident as explained below:
+        // 1. algorithm = relies on accessible algorithms for the OpenSSL platform
+        // In the Hybrid Encryption system, the algorithm domain includes:
+        // MD5, SHA-1, SHA-2, NTLM, and LANMAN
+        // sha = stands for Secure Hash Algorith (SHA)
+        // As shown in the above syntax, in this case, the used algorithm is sha512
+        // Other algorithm options in SHA-2 are SHA-224, SHA-256, SHA-384 and SHA-512
+        // SHA-256 - is one of the most popular hash algorithms
+    }
+    UserModel.patchUser(req.params.userId, req.body).then((result) => {
+        res.status(204).send({});
+    });
+};
+
 
 exports.removeById = (req, res) => {
     UserModel.removeById(req.params.userId)
