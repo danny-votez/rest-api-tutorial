@@ -1,6 +1,15 @@
 const mongoose = require('../../common/services/mongoose.service').mongoose;
 const Schema = mongoose.Schema;
 
+// const userSchema = new Schema({
+//     firstName: String,
+//     lastName: String,
+//     email: String,
+//     password: String,
+//     permissionLevel: Number
+// });
+
+
 const userSchema = new Schema({
     firstName: String,
     lastName: String,
@@ -8,6 +17,7 @@ const userSchema = new Schema({
     password: String,
     permissionLevel: Number
 });
+
 
 userSchema.virtual('id').get(function () {
     return this._id.toHexString();
